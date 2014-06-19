@@ -1,0 +1,7 @@
+name = Drupalize Class Example
+description = An example on how to use the Drupalize Class module
+core = 7.x
+package = Nodebite
+files[] = drupalize_class_example.module
+php = 5.3
+dependencies[] = drupalize_class

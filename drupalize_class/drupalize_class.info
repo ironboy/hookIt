@@ -1,0 +1,6 @@
+name = Drupalize Class
+description = A module that simplifies working with hooks in classes
+core = 7.x
+package = Nodebite
+files[] = drupalize_class.module
+php = 5.3
