@@ -1,12 +1,28 @@
 <?php
 /*
-	The hook it module.
+	The HookIt module.
 
 	Nodebite 2014, Thomas Frank
 
 	This module does nothing in itself.
 	It is a  helper module that simplifies listening
 	to hooks when you write class based code in other modules
+
+	Usage: Connect your methods to hooks by
+
+	1) Extending your class from HookIt:
+
+	   class myClass extends HookIt {...}
+	
+	2) Telling HookIt which methods that should be connected
+	   to Drupal hooks in your constructor (or any method you
+	   call in your constructor):
+	   
+	   $this->hookIt(array(
+			 "hookName" => "methodName",  [OR]
+			 "hookName1, hookName2" => "methodName", [OR]
+			 "hookName" => "methodName1, methodName2"
+	   ));
 
 */
 
@@ -22,10 +38,13 @@ class HookIt {
 	protected function hookIt($hookSettings){
 		// connect the methods to hooks
 		$module = $this->currentModule();
-		foreach ($hookSettings as $hook => $methods){
+		foreach ($hookSettings as $hooks => $methods){
 			$methods = explode(",",str_replace(" ","",$methods));
-			foreach($methods as $method){
-				HookIt::regHook($module,$hook,$method,$this);
+			$hooks = explode(",",str_replace(" ","",$hooks));
+			foreach($hooks as $hook){
+				foreach($methods as $method){
+					HookIt::regHook($module,$hook,$method,$this);
+				}
 			}
 		}
 	}
@@ -64,13 +83,18 @@ class HookIt {
 			);
 		}
 
-		// Add method to memory
-		if(!isset($mem[$module][$hook][$method])){
-				$mem[$module][$hook][$method] = array(
-					"obj" => $obj,
-					"method" => $method
-				);
+		// Avoid duplicate hook connections
+		foreach($mem[$module][$hook] as $con){
+			if($con["obj"] === $obj && $con["method"] == $method){
+				return;
+			}
 		}
+
+		// Add method to memory
+		$mem[$module][$hook][] = array(
+			"obj" => $obj,
+			"method" => $method
+		);
 
 	}
 
@@ -84,7 +108,7 @@ class HookIt {
 		}
 
 		// Call registrered classes and methods
-		foreach($mem[$moduleName][$hookName] as $name => $method){
+		foreach($mem[$moduleName][$hookName] as $method){
 			
 			if(!method_exists($method["obj"],$method["method"])){
 				continue;
@@ -98,7 +122,7 @@ class HookIt {
 			);
 			
 		}
-		
+
 	}
 
 	// Resolve calls to methods that are hooked
@@ -117,35 +141,3 @@ function hook_it_install() {
     ->condition('name', 'drupalize_class', '=')
     ->execute();
 }
-
-
-
-
-// Test
-
-class Cat extends HookIt {
-
-	protected function eat(){
-		echo "YUM!<br>";
-	}
-
-	protected function bark(&$x){
-		$x[] = "då";
-		echo "WOFF!<br>";
-	}
-
-	public function __construct(){
-		$this->hookIt(array(
-			"boot" => "eat,bark",
-			"init" => "eat"
-		));
-		$this->hookIt(array("boot" => "bark"));
-	}
-}
-
-
-$cat = new Cat();
-$a = array("hej");
-cool_boot($a);
-var_dump($a);
-
