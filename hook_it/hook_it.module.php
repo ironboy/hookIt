@@ -12,21 +12,15 @@
 
 class HookIt {
 
-	/*
-		hookIt(array(
-			"init" => "bark, eat"
-			"boot" => "eat"
-		));
-
-	*/
-
 	private static $hookMem = array();
 
 	protected function hook_it($hookSettings){
+		// an alias for hookIt (see below)
 		$this->hookIt($hookSettings);
 	}
 
 	protected function hookIt($hookSettings){
+		// connect the methods to hooks
 		$module = $this->currentModule();
 		foreach ($hookSettings as $hook => $methods){
 			$methods = explode(",",str_replace(" ","",$methods));
@@ -72,7 +66,7 @@ class HookIt {
 
 		// Add method to memory
 		if(!isset($mem[$module][$hook][$method])){
-				$mem[$module][$hook][] = array(
+				$mem[$module][$hook][$method] = array(
 					"obj" => $obj,
 					"method" => $method
 				);
@@ -90,18 +84,26 @@ class HookIt {
 		}
 
 		// Call registrered classes and methods
-		foreach($mem[$moduleName][$hookName] as $method){
+		foreach($mem[$moduleName][$hookName] as $name => $method){
 			
 			if(!method_exists($method["obj"],$method["method"])){
 				continue;
 			}
 
+			// Using a "man-in-the-middle" method __hookresolve__
+			// we can hook protected methods (not only public ones)
 			call_user_func_array(
-				array($method["obj"],$method["method"]),
-				$args
+				array($method["obj"], "__hookresolve__"),
+				array($method["method"], $args)
 			);
 			
 		}
+		
+	}
+
+	// Resolve calls to methods that are hooked
+	public function __hookresolve__($method,$args){
+		call_user_func_array(array($this,$method),$args);
 	}
 
 }
@@ -123,21 +125,21 @@ function hook_it_install() {
 
 class Cat extends HookIt {
 
-	public function eat(){
+	protected function eat(){
 		echo "YUM!<br>";
 	}
 
-	public function bark(&$x){
+	protected function bark(&$x){
 		$x[] = "då";
 		echo "WOFF!<br>";
 	}
-
 
 	public function __construct(){
 		$this->hookIt(array(
 			"boot" => "eat,bark",
 			"init" => "eat"
 		));
+		$this->hookIt(array("boot" => "bark"));
 	}
 }
 
