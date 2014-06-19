@@ -1,0 +1,7 @@
+name = Hook It Example
+description = An example on how to use the Drupalize Class module
+core = 7.x
+package = Nodebite
+files[] = hook_it_example.module
+php = 5.3
+dependencies[] = hook_it
