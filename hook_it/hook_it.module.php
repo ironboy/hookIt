@@ -1,6 +1,6 @@
 <?php
 /*
-	The HookIt module.
+	The hookIt module.
 
 	Nodebite 2014, Thomas Frank
 
@@ -14,7 +14,7 @@
 
 	   class myClass extends HookIt {...}
 	
-	2) Telling HookIt which methods that should be connected
+	2) Telling hookIt which methods that should be connected
 	   to Drupal hooks in your constructor (or any method you
 	   call in your constructor):
 	   
@@ -24,6 +24,9 @@
 			 "hookName" => "methodName1, methodName2"
 	   ));
 
+	Please Note: Visibility!
+	Methods you hook must be public or protected,
+	they can not be private!
 */
 
 class HookIt {
