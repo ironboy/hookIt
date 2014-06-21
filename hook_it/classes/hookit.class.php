@@ -85,6 +85,8 @@ class HookIt {
     if ($path != 'admin/help#hook_it') { return; }
     $path = $this->getModulePath()."/help.txt";
     $help = t(file_get_contents($path));
+    $help = str_replace('<','&lt;',$help);
+    $help = str_replace('>','&gt;',$help);
     $help = "<pre style=\"font-size:16px\">$help</pre>";
     return $help;
   }
