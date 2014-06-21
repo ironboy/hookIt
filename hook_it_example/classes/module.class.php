@@ -1,10 +1,13 @@
 <?php namespace hook_it_example;
 
-class Module {
+class Module extends \HookIt {
 
   public function __construct() {
     new Cat();
     new Dog();
+    $this->hookIt(array(
+      'help' => 'helper'
+    ));
   }
   
 }

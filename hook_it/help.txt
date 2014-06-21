@@ -42,13 +42,13 @@ rights to write to the class folder).
 
 Usage: Connect your methods to hooks by
 
-1) Extending your class from HookIt (note the backslash):
+1) Extend your class to inherit from HookIt (note the backslash):
 
    class myClass extends \HookIt {...}
 
-2) Telling hookIt which methods that should be connected
-   to Drupal hooks in your constructor (or any method you
-   call in your constructor):
+2) Tell hookIt which methods that should be connected
+   to Drupal hooks from your constructor (or any method
+   that you call in your constructor):
    
    $this->hookIt(array(
      "hookName" => "methodName",  [OR]

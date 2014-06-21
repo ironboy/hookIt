@@ -73,7 +73,7 @@ class HookIt {
   // The installer sets a low weight for the module
   // to ensure that the class HookIt is available
   // to all other modules
-  protected function installer(){
+  private function installer(){
     db_update('system')
       ->fields(array('weight' => -1000, 'bootstrap' => 1))
       ->condition('name', $this->getModuleName(), '=')
@@ -84,6 +84,7 @@ class HookIt {
   protected function helper($path){
     if ($path != 'admin/help#'.$this->getModuleName()) { return; }
     $path = $this->getModulePath()."/help.txt";
+    if(!file_exists($path)){ return; }
     $help = t(file_get_contents($path));
     $help = str_replace('<','&lt;',$help);
     $help = str_replace('>','&gt;',$help);
