@@ -1,5 +1,5 @@
 name = Hook It Example
-description = An example of how to use the Hook It module
+description = Gives an example of how to use the Hook It module
 core = 7.x
 package = Nodebite
 files[] = hook_it_example.module

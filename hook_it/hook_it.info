@@ -1,5 +1,5 @@
 name = Hook It
-description = A module that simplifies working with hooks in classes
+description = Adds support for hooks in classes, also autoloads and namespaces classes
 core = 7.x
 package = Nodebite
 files[] = hook_it.module
