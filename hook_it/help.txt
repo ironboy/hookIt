@@ -10,7 +10,7 @@ Nodebite 2014, Thomas Frank
 --------------------------------------------------------------
 
 This is a helper module that simplifies listening
-to hooks when you write class based code in other modules
+to hooks when you write class based code in other modules.
 
 It also autoloads all your classes for you assuming they
 are stored in a subfolder to your module named "classes"
