@@ -82,7 +82,7 @@ class HookIt {
 
   // Display the help for this module
   protected function helper($path){
-    if ($path != 'admin/help#hook_it') { return; }
+    if ($path != 'admin/help#'.$this->getModuleName()) { return; }
     $path = $this->getModulePath()."/help.txt";
     $help = t(file_get_contents($path));
     $help = str_replace('<','&lt;',$help);
