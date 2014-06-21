@@ -9,8 +9,7 @@ Nodebite 2014, Thomas Frank
 
 --------------------------------------------------------------
 
-This module does nothing in itself.
-It is a  helper module that simplifies listening
+This is a helper module that simplifies listening
 to hooks when you write class based code in other modules
 
 It also autoloads all your classes for you assuming they

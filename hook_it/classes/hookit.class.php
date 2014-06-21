@@ -83,12 +83,26 @@ class HookIt {
   // Display the help for this module
   protected function helper($path){
     if ($path != 'admin/help#'.$this->getModuleName()) { return; }
+    drupal_add_css(
+      "@import url(//fonts.googleapis.com/css?family=PT+Mono);".
+      ".hookithelp {".
+      "  font-family:'PT Mono';".
+      "  font-size:16px;".
+      "  color:#fff;".
+      "  border:10px solid #0073ba;".
+      "  padding: 50px;".
+      "  background:#014a76;".
+      "  max-width:580px;".
+      "  margin:0 auto 30px".
+      "}",
+      "inline"
+    );
     $path = $this->getModulePath()."/help.txt";
     if(!file_exists($path)){ return; }
     $help = t(file_get_contents($path));
     $help = str_replace('<','&lt;',$help);
     $help = str_replace('>','&gt;',$help);
-    $help = "<pre style=\"font-size:16px\">$help</pre>";
+    $help = "<pre class=\"hookithelp\">$help</pre>";
     return $help;
   }
 
