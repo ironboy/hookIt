@@ -1,6 +1,3 @@
-hookIt
-======
-
 The hookIt module
 
  .--.
@@ -32,11 +29,10 @@ in your module:
 We use namespacing since Drupal wouldn't be able to use
 two modules with the same class names in otherwise.
 
-Please note:
 To simplify setup (and changing your module name, hookIt
 will attempt to set the correct namespace automatically
 in all class files, but can only do so if it has file system
-rights to write to the class folder).
+rights to write to the class folder)
 
 --------------------------------------------------------------
 
