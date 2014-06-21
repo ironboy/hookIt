@@ -17,7 +17,10 @@ It also autoloads all your classes for you assuming they
 are stored in a subfolder to your module named "classes"
 and with filenames following the pattern "classname.class.php".
 
+When you use it in other modules please add a dependency
+to hook_it in your .info file:
 
+dependencies[] = hook_it
 --------------------------------------------------------------
 
 IMPORTANT: In order for autoloading to work correctly
@@ -29,10 +32,11 @@ in your module:
 We use namespacing since Drupal wouldn't be able to use
 two modules with the same class names in otherwise.
 
-To simplify setup (and changing your module name, hookIt
-will attempt to set the correct namespace automatically
-in all class files, but can only do so if it has file system
-rights to write to the class folder)
+Please note:
+To simplify setup (and changes to your module name), 
+hookIt will attempt to set the correct namespace automatically
+in all class files, but can only do so Drupal has write 
+rights to write to the class folder).
 
 --------------------------------------------------------------
 
