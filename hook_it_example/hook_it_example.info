@@ -1,7 +1,9 @@
 name = Hook It Example
 description = Gives an example of how to use the Hook It module
+version = 1.1
 core = 7.x
-package = Nodebite
-files[] = hook_it_example.module
 php = 5.3
+package = Nodebite
+author = Thomas Frank, 2014
+files[] = hook_it_example.module
 dependencies[] = hook_it

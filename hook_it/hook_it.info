@@ -1,6 +1,8 @@
 name = Hook It
 description = Adds support for hooks in classes, also autoloads and namespaces classes
+version = 1.1
 core = 7.x
-package = Nodebite
-files[] = hook_it.module
 php = 5.3
+package = Nodebite
+author = Thomas Frank, 2014
+files[] = hook_it.module

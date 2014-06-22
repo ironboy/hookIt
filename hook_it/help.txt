@@ -1,12 +1,3 @@
-The hookIt module
-
- .--.
-/.-. '----------.
-\'-' .--"--""-"-'
- '--'
-
-Nodebite 2014, Thomas Frank
-
 --------------------------------------------------------------
 
 This is a helper module that simplifies listening
@@ -20,6 +11,7 @@ When you use it in other modules please add a dependency
 to hook_it in your .info file:
 
 dependencies[] = hook_it
+
 --------------------------------------------------------------
 
 IMPORTANT: In order for autoloading to work correctly
@@ -58,6 +50,7 @@ Usage: Connect your methods to hooks by
 
 --------------------------------------------------------------
 
-IMPORTANT: A note on visibility!
+IMPORTANT: 
+A note on visibility!
 Methods that you hook must be public or protected,
 they can not be private!
