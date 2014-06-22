@@ -3,8 +3,8 @@
 This is a helper module that simplifies listening
 to hooks when you write class based code in other modules.
 
-It also autoloads all your classes for you assuming they
-are stored in a subfolder to your module named "classes"
+It also autoloads all your classes assuming they are
+stored in a subfolder to your module named "classes"
 and with filenames following the pattern "classname.class.php".
 
 When you use it in other modules please add a dependency
@@ -20,18 +20,18 @@ in your module:
 
 <?php namespace my_module_name;
 
-We use namespacing since Drupal wouldn't be able to use
-two modules with the same class names in otherwise.
+We are use namespacing since Drupal wouldn't be able to use
+two modules with the same class names otherwise.
 
 Please note:
 To simplify setup (and changes to your module name), 
 hookIt will attempt to set the correct namespace automatically
 in all class files, but can only do so Drupal has write 
-rights to write to the class folder).
+rights to the class folder.
 
 --------------------------------------------------------------
 
-Usage: Connect your methods to hooks by
+Usage: Connect your methods to hooks like this:
 
 1) Extend your class to inherit from HookIt (note the backslash):
 
@@ -46,6 +46,9 @@ Usage: Connect your methods to hooks by
      "hookName1, hookName2" => "methodName", [OR]
      "hookName" => "methodName1, methodName2"
    ));
+
+   Note that several objects (in one or several classe) can be
+   linked to the same hooks.
 
 
 --------------------------------------------------------------
