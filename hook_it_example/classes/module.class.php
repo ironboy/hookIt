@@ -5,9 +5,7 @@ class Module extends \HookIt {
   public function __construct() {
     new Cat();
     new Dog();
-    $this->hookIt(array(
-      'help' => 'helper'
-    ));
+    new \hook_it\Help();
   }
   
 }

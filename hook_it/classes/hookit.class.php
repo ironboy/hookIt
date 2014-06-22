@@ -1,20 +1,20 @@
-<?php
+<?php // no namespace
 
 class HookIt {
 
   // A memory for how hooks a connected to methods
   private static $hookMem = array();
 
-  // A flag for if we have created the autoloader
-  private static $autoloaderSet;
-
-  // On instantiation build the autoloader
-  // and hook install to the installer
+  // On instantiation instantiate
+  // autoloader and help + connect to relevant hooks
   public function __construct(){
-    $this->buildAutoLoader();
+    include_once("autoloader.class.php");
+    new hook_it\Autoloader();
+    new hook_it\Help();
     $this->hookIt(array(
       "install" => "installer",
-      "help" => "helper",
+      "menu" => "config",
+      "form" => "form",
       "boot" => "emptyMethod"
     ));
   }
@@ -23,52 +23,6 @@ class HookIt {
   // (we connect to boot to ensure the module keppes the
   //  value bootstrap = 1 in the system table in the DB
   protected function emptyMethod(){}
-
-  // Build the autoloader if not build before
-  private function buildAutoloader(){
-
-    if(self::$autoloaderSet){
-      return;
-    }
-
-    self::$autoloaderSet = true;
-
-    // Calculate the path to a class file
-    // assuming it exists in a subfolder to the module
-    // called classes
-    spl_autoload_register(function ($class) {
-      // Get the name of the class (without namespace)
-      $class = array_pop(explode('\\',$class));
-      // Get the module name
-      ob_start();
-      var_dump(debug_backtrace());
-      $result = explode(".module",ob_get_clean());
-      $result = array_pop(explode('"',$result[0]));
-      $result = explode("/",$result);
-      array_pop($result);
-      $result = implode("/",$result);
-      $moduleName = array_pop(explode("/",$result));
-      // Calculate a file path to the class to include
-      $file = $result.'/classes/' . strtolower($class) . '.class.php';
-      // If the file exists then include it with a correct namespace
-      if(file_exists($file)){
-        // Check that the file has a correct namespace
-        // (equal to the module name else try to rewrite
-        // the file with a module name)
-        $data = file_get_contents($file);
-        $classphp = explode("<?php",$data);
-        $classphp[1] = explode("\n",$classphp[1]);
-        $classphp[1][0] = " namespace $moduleName;";
-        $classphp[1] = implode("\n",$classphp[1]);
-        $classphp = implode("<?php",$classphp);
-        if($classphp != $data){
-          file_put_contents($file,$classphp);
-        }
-        // Include the file
-        include ($file);
-      }
-    });
-  }
 
   // The installer sets a low weight for the module
   // to ensure that the class HookIt is available
@@ -80,49 +34,49 @@ class HookIt {
       ->execute();
   }
 
-  // Display the help for this module
-  protected function helper($path){
-    if ($path != 'admin/help#'.$this->getModuleName()) { return; }
-    drupal_add_css("//fonts.googleapis.com/css?family=PT+Mono","external");
-    drupal_add_css("//maxcdn.bootstrapcdn.com/font-awesome/4.1.0".
-      "/css/font-awesome.min.css","external");
-    drupal_add_css(
-      ".hookithelp {".
-      "  font-family:'PT Mono';".
-      "  font-size:16px;".
-      "  line-height:135%;".
-      "  color:#eee;".
-      "  border:10px solid #0073ba;".
-      "  padding: 50px;".
-      "  background:#014a76;".
-      "  max-width:580px;".
-      "  margin:0 auto 30px;".
-      "}".
-      ".hookithelp .fa {".
-      "  margin-right:30px;".
-      "  margin-bottom:30px;".
-      "  font-size:120px;".
-      "  display:block;".
-      "  opacity: .6;".
-      "  float:left;".
-      "}",
-      "inline"
+  // Config settings
+  protected function config(){
+
+    $items = array();
+    $title = "Hook it";
+    $description = "Adds support for hooks in classes, ".
+      "also autoloads and namespaces classes.";
+
+    $items['admin/config/development/hook_it'] = array(
+      'title' =>  $title,
+      'description' => $description,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('hook_it_form'),
+      'access arguments' => array('administer hook it'),
     );
-    $path = $this->getModulePath()."/".$this->getModuleName().'.info';
-    if(!file_exists($path)){ return; }
-    $info = t(file_get_contents($path));
-    $info = "module ".str_replace("=",":",$info);
-    $info = str_replace("\n"," - ",$info);
-    $info = str_replace(" - description","\ndescription",$info);
-    $info = str_replace(" - version","\n\nversion",$info);
-    $path = $this->getModulePath()."/help.txt";
-    if(!file_exists($path)){ return; }
-    $help = $info."\n\n".t(file_get_contents($path));
-    $help = str_replace('<','&lt;',$help);
-    $help = str_replace('>','&gt;',$help);
-    $help = "<i class=\"fa fa-drupal\"></i>".$help;
-    $help = "<pre class=\"hookithelp\">$help</pre>";
-    return $help;
+
+    $items['admin/config/development/hook_it/hook_it'] = array(
+      'title' =>  $title,
+      'description' => $description,
+      'access arguments' => array('administer hook it'),
+      'weight' => -10,
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+    );
+
+    return $items;
+  }
+
+  protected function form(){
+    $form['system_status'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Status'),
+      '#description' => t('Enter the current system status.'),
+      '#default_value' => "cool ",
+      '#size' => 40,
+      '#maxlength' => 255,
+    );
+
+    $form['options']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save status'),
+    );
+
+    return $form;
   }
 
   // This is just an alias for hookIt (see below)
@@ -151,22 +105,24 @@ class HookIt {
     return call_user_func_array(array($this,$method),$args);
   }
 
-  // Calaculate the path to the current module
-  public function getModulePath() {
-    $rc = new ReflectionClass(get_class($this));
-    $dir = dirname($rc->getFileName());
-    while($dir && !count(glob($dir."\/*\.module"))){
-      $dir = explode("/",$dir);
-      array_pop($dir);
-      $dir = implode("/",$dir);
-    }
-    return $dir;
+  // Calculate the path to the current module
+  public static function getModulePath() {;
+    ob_start();
+    var_dump(debug_backtrace());
+    $result = explode(".module",ob_get_clean());
+    $result = array_pop(explode('"',$result[0]));
+    $result = explode("/",$result);
+    array_pop($result);
+    $result = implode("/",$result);
+    return $result;
   }
 
   // Get the module name of the current module
-  protected function getModuleName(){
-    $path = explode("/",$this-> getModulePath());
-    return array_pop($path);
+  public static function getModuleName(){
+    $path = explode("/",self::getModulePath());
+    $name = array_pop($path);
+    echo($name.'<br>');
+    return $name;
   }
 
   // Register a connection between a method and a hook
