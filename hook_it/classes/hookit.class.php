@@ -106,24 +106,24 @@ class HookIt {
   }
 
   // Calculate the path to the current module
-  public static function getModulePath() {;
-    ob_start();
-    var_dump(debug_backtrace());
-    $result = explode(".module",ob_get_clean());
-    $result = array_pop(explode('"',$result[0]));
-    $result = explode("/",$result);
-    array_pop($result);
-    $result = implode("/",$result);
-    return $result;
+  // i.e. the module the class that defined $this is in
+  // (works inside methods listening to hooks)
+  protected function getModulePath() {
+    $rc = new ReflectionClass(get_class($this));
+    $dir = dirname($rc->getFileName());
+    while($dir && !count(glob($dir."\/*\.module"))){
+      $dir = explode("/",$dir);
+      array_pop($dir);
+      $dir = implode("/",$dir);
+    }
+    return $dir;
   }
 
-  // Get the module name of the current module
-  public static function getModuleName(){
-    $path = explode("/",self::getModulePath());
-    $name = array_pop($path);
-    echo($name.'<br>');
-    return $name;
+  protected function getModuleName(){
+    $path = explode("/",$this-> getModulePath());
+    return array_pop($path);
   }
+
 
   // Register a connection between a method and a hook
   // in the $hookMem

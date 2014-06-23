@@ -1,23 +1,41 @@
 <?php namespace hook_it;
 
-class Autoloader extends \Hookit {
+class Autoloader {
 
   public function __construct(){
-    $this->buildAutoloader();
-  }
-
-  // Make sure the autoloader is only created once
-  private static $autoloaderSet;
-
-  // Build the autoloader if not build before
-  private function buildAutoloader(){
-
+    // Make sure we only build the autoloader once
     if(self::$autoloaderSet){
       return;
     }
-
     self::$autoloaderSet = true;
+    // Go build it
+    $this->buildAutoloader();
+  }
 
+  // Flag for it the autoloader has been built
+  public static $autoloaderSet;
+ 
+  // Calculate the path to the current module
+  // static approach from debug_backtrace
+  // (works for the autoloader)
+  public static function getModulePath() {
+    ob_start();
+    var_dump(debug_backtrace());
+    $result = explode(".module",ob_get_clean());
+    $result = array_pop(explode('"',$result[0]));
+    $result = explode("/",$result);
+    array_pop($result);
+    $result = implode("/",$result);
+    return $result;
+  }
+
+  public static function getModuleName(){
+    $path = explode("/",self::getModulePath());
+    return array_pop($path);
+  }
+
+  // Build the autoloader if not build before
+  private function buildAutoloader(){
     // Calculate the path to a class file
     // assuming it exists in a subfolder to the module
     // called classes
@@ -25,9 +43,9 @@ class Autoloader extends \Hookit {
       // Get the name of the class (without namespace)
       $class = array_pop(explode('\\',$class));
       // Get the module name
-      $moduleName = \Hookit::getModuleName();
+      $moduleName = Autoloader::getModuleName();
       // Calculate a file path to the class to include
-      $file = \Hookit::getModulePath().'/classes/' .
+      $file = Autoloader::getModulePath().'/classes/' .
         strtolower($class) . '.class.php';
       // If the file exists then include it with a correct namespace
       if(file_exists($file)){
