@@ -13,8 +13,6 @@ class HookIt {
     new hook_it\Help();
     $this->hookIt(array(
       "install" => "installer",
-      "menu" => "config",
-      "form" => "form",
       "boot" => "emptyMethod"
     ));
   }
@@ -32,51 +30,6 @@ class HookIt {
       ->fields(array('weight' => -1000, 'bootstrap' => 1))
       ->condition('name', $this->getModuleName(), '=')
       ->execute();
-  }
-
-  // Config settings
-  protected function config(){
-
-    $items = array();
-    $title = "Hook it";
-    $description = "Adds support for hooks in classes, ".
-      "also autoloads and namespaces classes.";
-
-    $items['admin/config/development/hook_it'] = array(
-      'title' =>  $title,
-      'description' => $description,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('hook_it_form'),
-      'access arguments' => array('administer hook it'),
-    );
-
-    $items['admin/config/development/hook_it/hook_it'] = array(
-      'title' =>  $title,
-      'description' => $description,
-      'access arguments' => array('administer hook it'),
-      'weight' => -10,
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-    );
-
-    return $items;
-  }
-
-  protected function form(){
-    $form['system_status'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Status'),
-      '#description' => t('Enter the current system status.'),
-      '#default_value' => "cool ",
-      '#size' => 40,
-      '#maxlength' => 255,
-    );
-
-    $form['options']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Save status'),
-    );
-
-    return $form;
   }
 
   // This is just an alias for hookIt (see below)
