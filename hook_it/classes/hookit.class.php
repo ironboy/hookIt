@@ -77,6 +77,11 @@ class HookIt {
     return array_pop($path);
   }
 
+  protected function getModuleURL(){
+    return $GLOBALS["base_path"].
+      drupal_get_path('module', $this->getModuleName());
+  }
+
 
   // Register a connection between a method and a hook
   // in the $hookMem
