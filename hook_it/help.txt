@@ -26,7 +26,7 @@ two modules with the same class names otherwise.
 Please note:
 To simplify setup (and changes to your module name), 
 hookIt will attempt to set the correct namespace automatically
-in all class files, but can only do so Drupal has write 
+in all class files, but can only do so if Drupal has write 
 rights to the class folder.
 
 --------------------------------------------------------------
