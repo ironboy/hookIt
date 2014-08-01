@@ -26,8 +26,11 @@ class HookIt {
   // to ensure that the class HookIt is available
   // to all other modules
   private function installer(){
+    if(!$this->getModuleName() != "hook_it"){
+      return;
+    }
     db_update('system')
-      ->fields(array('weight' => -1000, 'bootstrap' => 1))
+      ->fields(array('weight' => -10000, 'bootstrap' => 1))
       ->condition('name', $this->getModuleName(), '=')
       ->execute();
   }
